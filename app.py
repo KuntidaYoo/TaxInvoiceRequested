@@ -52,7 +52,7 @@ def build_output(lex_file, spx_file) -> bytes:
         lex_mask = lex_df.iloc[:, lex_flag_idx].apply(_is_true)
         lex_out = select_by_letters(lex_df.loc[lex_mask].copy(), LEX_KEEP_COLS)
     else:
-        lex_out = pd.DataFrame(columns=LEX_KEEP_COLS)
+        lex_out = None
 
     if spx_file is not None:
         spx_df = pd.read_excel(spx_file, dtype=object)
@@ -62,14 +62,16 @@ def build_output(lex_file, spx_file) -> bytes:
         spx_mask = spx_df.iloc[:, spx_flag_idx].apply(_is_yes)
         spx_out = select_by_letters(spx_df.loc[spx_mask].copy(), SPX_KEEP_COLS)
     else:
-        spx_out = pd.DataFrame(columns=SPX_KEEP_COLS)
+        spx_out = None
 
     bio = BytesIO()
     with pd.ExcelWriter(bio, engine="openpyxl") as writer:
-        if lex_file is not None:
+        if lex_out is not None:
             lex_out.to_excel(writer, sheet_name="LEX", index=False)
-        if spx_file is not None:
+        if spx_out is not None:
             spx_out.to_excel(writer, sheet_name="SPX", index=False)
+
+    return bio.getvalue()
 
 
 st.set_page_config(page_title="รายชื่อลูกค้าขอใบกำกับภาษี online")
