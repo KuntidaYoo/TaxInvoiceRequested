@@ -66,9 +66,10 @@ def build_output(lex_file, spx_file) -> bytes:
 
     bio = BytesIO()
     with pd.ExcelWriter(bio, engine="openpyxl") as writer:
-        lex_out.to_excel(writer, sheet_name="LEX", index=False)
-        spx_out.to_excel(writer, sheet_name="SPX", index=False)
-    return bio.getvalue()
+        if lex_file is not None:
+            lex_out.to_excel(writer, sheet_name="LEX", index=False)
+        if spx_file is not None:
+            spx_out.to_excel(writer, sheet_name="SPX", index=False)
 
 
 st.set_page_config(page_title="รายชื่อลูกค้าขอใบกำกับภาษี online")
